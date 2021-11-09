@@ -42,12 +42,21 @@ public:
 	UFUNCTION()
 	void OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted);
 
+	UFUNCTION()
+	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
+
 public:
 	UPROPERTY()
 	float UpDownValue = 0;
 
 	UPROPERTY()
 	float LeftRightValue = 0;
+
+	UPROPERTY(VisibleAnywhere)
+	class UStatComponent* Stat;
+
+	UPROPERTY(VisibleAnywhere)
+	class UWidgetComponent* HpBar;
 
 private:
 	UPROPERTY(VisibleAnywhere, Category = Pawn)

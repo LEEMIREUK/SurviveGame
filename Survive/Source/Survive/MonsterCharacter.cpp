@@ -6,6 +6,9 @@
 #include "MonsterAIController.h"
 #include "DrawDebugHelpers.h"
 #include "Components/CapsuleComponent.h"
+#include "StatComponent.h"
+#include "Components/WidgetComponent.h"
+#include "MonsterCharacterWidget.h"
 
 // Sets default values
 AMonsterCharacter::AMonsterCharacter()
@@ -23,8 +26,23 @@ AMonsterCharacter::AMonsterCharacter()
 		GetMesh()->SetSkeletalMesh(SM.Object);
 	}
 	
+	Stat = CreateDefaultSubobject<UStatComponent>(TEXT("STAT"));
+
+	HpBar = CreateDefaultSubobject<UWidgetComponent>(TEXT("HPBAR"));
+	HpBar->SetupAttachment(GetMesh());
+	HpBar->SetRelativeLocation(FVector(0.f, 0.f, 250.f));
+	HpBar->SetWidgetSpace(EWidgetSpace::Screen);
+
+	static ConstructorHelpers::FClassFinder<UUserWidget> UW(TEXT("WidgetBlueprint'/Game/UI/WBP_MonsterHPBar.WBP_MonsterHPBar_C'"));
+	if (UW.Succeeded())
+	{
+		HpBar->SetWidgetClass(UW.Class);
+		HpBar->SetDrawSize(FVector2D(200.f, 50.f));
+	}
+
 	AIControllerClass = AMonsterAIController::StaticClass();
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
+
 }
 
 // Called when the game starts or when spawned
@@ -44,6 +62,12 @@ void AMonsterCharacter::PostInitializeComponents()
 		AnimInstance->OnMontageEnded.AddDynamic(this, &AMonsterCharacter::OnAttackMontageEnded);
 		AnimInstance->OnAttackHit.AddUObject(this, &AMonsterCharacter::AttackCheck);
 	}
+
+	HpBar->InitWidget();
+
+	auto HpWidget = Cast<UMonsterCharacterWidget>(HpBar->GetUserWidgetObject());
+	if (HpWidget)
+		HpWidget->BindHp(Stat);
 }
 
 // Called every frame
@@ -105,7 +129,8 @@ void AMonsterCharacter::AttackCheck()
 
 	if (bResult && HitResult.Actor.IsValid())
 	{
-		UE_LOG(LogTemp, Log, TEXT("Hit Actor : %s"), *HitResult.Actor->GetName());
+		FDamageEvent DamageEvent;
+		HitResult.Actor->TakeDamage(Stat->GetAttack(), DamageEvent, GetController(), this);
 	}
 }
 
@@ -133,4 +158,11 @@ void AMonsterCharacter::OnAttackMontageEnded(UAnimMontage* Montage, bool bInterr
 {
 	IsAttacking = false;
 	OnAttackEnd.Broadcast();
+}
+
+float AMonsterCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	Stat->OnAttacked(DamageAmount);
+
+	return DamageAmount;
 }

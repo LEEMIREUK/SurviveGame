@@ -7,6 +7,9 @@
 #include "Components/CapsuleComponent.h"
 #include "PlayerAnimInstance.h"
 #include "DrawDebugHelpers.h"
+#include "StatComponent.h"
+#include "Components/WidgetComponent.h"
+#include "PlayerCharacterWidget.h"
 
 // Sets default values
 APlayerCharacter::APlayerCharacter()
@@ -21,7 +24,8 @@ APlayerCharacter::APlayerCharacter()
 	Camera->SetupAttachment(SpringArm);
 
 	SpringArm->TargetArmLength = 500.f;
-	SpringArm->SetRelativeRotation(FRotator(-35.f, 0.f, 0.f));
+	SpringArm->SetRelativeRotation(FRotator(-40.f, 0.f, 0.f));
+	SpringArm->SetRelativeLocation(FVector(-40.f, 0.f, 0.f));
 
 	GetMesh()->SetRelativeLocationAndRotation(FVector(0.f, 0.f, -88.f), FRotator(0.f, -90.f, 0.f));
 
@@ -31,6 +35,8 @@ APlayerCharacter::APlayerCharacter()
 	{
 		GetMesh()->SetSkeletalMesh(SM.Object);
 	}
+
+	Stat = CreateDefaultSubobject<UStatComponent>(TEXT("STAT"));
 }
 
 // Called when the game starts or when spawned
@@ -139,11 +145,19 @@ void APlayerCharacter::AttackCheck()
 
 	if (bResult && HitResult.Actor.IsValid())
 	{
-		UE_LOG(LogTemp, Log, TEXT("Hit Actor : %s"), *HitResult.Actor->GetName());
+		FDamageEvent DamageEvent;
+		HitResult.Actor->TakeDamage(Stat->GetAttack(), DamageEvent, GetController(), this);
 	}
 }
 
 void APlayerCharacter::OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 {
 	IsAttacking = false;
+}
+
+float APlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	Stat->OnAttacked(DamageAmount);
+
+	return DamageAmount;
 }
