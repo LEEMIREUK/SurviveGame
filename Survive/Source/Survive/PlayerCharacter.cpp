@@ -5,6 +5,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "PlayerAnimInstance.h"
 
 // Sets default values
 APlayerCharacter::APlayerCharacter()
@@ -36,6 +37,8 @@ void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	AnimInstance = Cast< UPlayerAnimInstance>(GetMesh()->GetAnimInstance());
+	AnimInstance->OnMontageEnded.AddDynamic(this, &APlayerCharacter::OnAttackMontageEnded);
 }
 
 // Called every frame
@@ -51,6 +54,7 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
 	PlayerInputComponent->BindAction(TEXT("Jump"), EInputEvent::IE_Pressed, this, &APlayerCharacter::Jump);
+	PlayerInputComponent->BindAction(TEXT("Attack"), EInputEvent::IE_Pressed, this, &APlayerCharacter::Attack);
 
 	PlayerInputComponent->BindAxis(TEXT("UpDown"), this, &APlayerCharacter::UpDown);
 	PlayerInputComponent->BindAxis(TEXT("LeftRight"), this, &APlayerCharacter::LeftRight);
@@ -59,9 +63,7 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 
 void APlayerCharacter::UpDown(float Value)
 {
-	if (Value == 0.f)
-		return;
-
+	UpDownValue = Value;
 	AddMovementInput(GetActorForwardVector(), Value);
 }
 
@@ -70,6 +72,7 @@ void APlayerCharacter::LeftRight(float Value)
 	if (Value == 0.f)
 		return;
 
+	LeftRightValue = Value;
 	AddMovementInput(GetActorRightVector(), Value);
 }
 
@@ -78,3 +81,20 @@ void APlayerCharacter::Yaw(float Value)
 	AddControllerYawInput(Value);
 }
 
+void APlayerCharacter::Attack()
+{
+	if (IsAttacking)
+		return;
+
+	AnimInstance->PlayerAttackMontage();
+
+	AnimInstance->JumpToSection(AttackIndex);
+	AttackIndex = (AttackIndex + 1) % 3;
+	
+	IsAttacking = true;
+}
+
+void APlayerCharacter::OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted)
+{
+	IsAttacking = false;
+}
