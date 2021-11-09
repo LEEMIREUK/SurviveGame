@@ -27,7 +27,6 @@ void AMonsterAIController::OnPossess(APawn* InPawn)
 {
 	Super::OnPossess(InPawn);
 
-//	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &AMonsterAIController::RandomMove, 3.f, true);
 	if (UseBlackboard(BlackboardData, Blackboard))
 	{
 		if (RunBehaviorTree(BehaviorTree))
@@ -40,8 +39,6 @@ void AMonsterAIController::OnPossess(APawn* InPawn)
 void AMonsterAIController::OnUnPossess()
 {
 	Super::OnUnPossess();
-
-//	GetWorld()->GetTimerManager().ClearTimer(TimerHandle);
 }
 
 void AMonsterAIController::RandomMove()

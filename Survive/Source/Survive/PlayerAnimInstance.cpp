@@ -8,10 +8,10 @@
 
 UPlayerAnimInstance::UPlayerAnimInstance()
 {
-	static ConstructorHelpers::FObjectFinder<UAnimMontage> AM(TEXT("AnimMontage'/Game/Animations/Greystone_Skeleton_Montage.Greystone_Skeleton_Montage'"));
-	if (AM.Succeeded())
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> PAM(TEXT("AnimMontage'/Game/Animations/Greystone_Skeleton_Montage.Greystone_Skeleton_Montage'"));
+	if (PAM.Succeeded())
 	{
-		AttackMontage = AM.Object;
+		AttackMontage = PAM.Object;
 	}
 }
 
@@ -35,7 +35,7 @@ void UPlayerAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	}
 }
 
-void UPlayerAnimInstance::PlayerAttackMontage()
+void UPlayerAnimInstance::PlayAttackMontage()
 {
 	Montage_Play(AttackMontage, 1.f);
 }
@@ -53,4 +53,5 @@ FName UPlayerAnimInstance::GetAttackMontageName(int32 SectionIndex)
 
 void UPlayerAnimInstance::AnimNotify_AttackHit()
 {
+	OnAttackHit.Broadcast();
 }

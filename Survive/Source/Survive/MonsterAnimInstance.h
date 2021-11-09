@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Animation/AnimInstance.h"
-#include "PlayerAnimInstance.generated.h"
+#include "MonsterAnimInstance.generated.h"
 
 /**
  * 
@@ -12,15 +12,15 @@
 DECLARE_MULTICAST_DELEGATE(FOnAttackHit);
 
 UCLASS()
-class SURVIVE_API UPlayerAnimInstance : public UAnimInstance
+class SURVIVE_API UMonsterAnimInstance : public UAnimInstance
 {
 	GENERATED_BODY()
 
 public:
-	UPlayerAnimInstance();
+	UMonsterAnimInstance();
 
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
-	
+
 	void PlayAttackMontage();
 	void JumpToSection(int32 SectionIndex);
 
@@ -33,9 +33,6 @@ private:
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
 	float Speed;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
-	bool IsFalling;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
 	UAnimMontage* AttackMontage;
