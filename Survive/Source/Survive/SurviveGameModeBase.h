@@ -13,5 +13,7 @@ UCLASS()
 class SURVIVE_API ASurviveGameModeBase : public AGameModeBase
 {
 	GENERATED_BODY()
-	
+
+public:
+	ASurviveGameModeBase();
 };

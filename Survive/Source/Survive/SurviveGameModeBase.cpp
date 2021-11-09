@@ -2,4 +2,9 @@
 
 
 #include "SurviveGameModeBase.h"
+#include "PlayerCharacter.h"
 
+ASurviveGameModeBase::ASurviveGameModeBase()
+{
+	DefaultPawnClass = APlayerCharacter::StaticClass();
+}
