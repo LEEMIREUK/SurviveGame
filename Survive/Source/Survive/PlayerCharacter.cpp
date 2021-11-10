@@ -37,6 +37,18 @@ APlayerCharacter::APlayerCharacter()
 	}
 
 	Stat = CreateDefaultSubobject<UStatComponent>(TEXT("STAT"));
+
+	HpBar = CreateDefaultSubobject<UWidgetComponent>(TEXT("HPBAR"));
+	HpBar->SetupAttachment(GetMesh());
+	HpBar->SetRelativeLocation(FVector(0.f, 0.f, 250.f));
+	HpBar->SetWidgetSpace(EWidgetSpace::Screen);
+
+	static ConstructorHelpers::FClassFinder<UUserWidget> UW(TEXT("WidgetBlueprint'/Game/UI/WBP_PlayerHpBar.WBP_PlayerHpBar_C'"));
+	if (UW.Succeeded())
+	{
+		HpBar->SetWidgetClass(UW.Class);
+		HpBar->SetDrawSize(FVector2D(200.f, 50.f));
+	}
 }
 
 // Called when the game starts or when spawned
@@ -58,6 +70,12 @@ void APlayerCharacter::PostInitializeComponents()
 		AnimInstance->OnMontageEnded.AddDynamic(this, &APlayerCharacter::OnAttackMontageEnded);
 		AnimInstance->OnAttackHit.AddUObject(this, &APlayerCharacter::AttackCheck);
 	}
+
+	HpBar->InitWidget();
+
+	auto HpWidget = Cast<UPlayerCharacterWidget>(HpBar->GetUserWidgetObject());
+	if (HpWidget)
+		HpWidget->BindHp(Stat);
 }
 
 // Called every frame
@@ -153,6 +171,7 @@ void APlayerCharacter::AttackCheck()
 void APlayerCharacter::OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 {
 	IsAttacking = false;
+	OnAttackEnd.Broadcast();
 }
 
 float APlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)

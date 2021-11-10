@@ -6,6 +6,8 @@
 #include "GameFramework/Character.h"
 #include "PlayerCharacter.generated.h"
 
+DECLARE_MULTICAST_DELEGATE(FOnAttackEnd);
+
 UCLASS()
 class SURVIVE_API APlayerCharacter : public ACharacter
 {
@@ -33,6 +35,8 @@ public:
 	void UpDown(float Value);
 	void LeftRight(float Value);
 	void Yaw(float Value);
+
+	FOnAttackEnd OnAttackEnd;
 
 public:
 	UFUNCTION()

@@ -33,7 +33,7 @@ AMonsterCharacter::AMonsterCharacter()
 	HpBar->SetRelativeLocation(FVector(0.f, 0.f, 250.f));
 	HpBar->SetWidgetSpace(EWidgetSpace::Screen);
 
-	static ConstructorHelpers::FClassFinder<UUserWidget> UW(TEXT("WidgetBlueprint'/Game/UI/WBP_MonsterHPBar.WBP_MonsterHPBar_C'"));
+	static ConstructorHelpers::FClassFinder<UUserWidget> UW(TEXT("WidgetBlueprint'/Game/UI/WBP_MonsterHPBar.WBP_MonsterHpBar_C'"));
 	if (UW.Succeeded())
 	{
 		HpBar->SetWidgetClass(UW.Class);

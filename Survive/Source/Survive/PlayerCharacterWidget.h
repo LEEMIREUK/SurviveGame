@@ -14,5 +14,14 @@ class SURVIVE_API UPlayerCharacterWidget : public UUserWidget
 {
 	GENERATED_BODY()
 	
+public:
+	void BindHp(class UStatComponent* StatComp);
 
+	void UpdateHp();
+
+private:
+	TWeakObjectPtr<class UStatComponent> CurrentStatComp;
+
+	UPROPERTY(meta = (BindWidget))
+	class UProgressBar* PB_PlayerHpBar;
 };
