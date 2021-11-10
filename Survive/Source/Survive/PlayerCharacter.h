@@ -52,6 +52,9 @@ public:
 	UPROPERTY()
 	float LeftRightValue = 0;
 
+	UPROPERTY()
+	bool IsDeath;
+
 	UPROPERTY(VisibleAnywhere)
 	class UStatComponent* Stat;
 	

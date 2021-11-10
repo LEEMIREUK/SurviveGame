@@ -29,6 +29,7 @@ void UMonsterAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 		{
 			Vertical = Character->UpDownValue;
 			Horizontal = Character->LeftRightValue;
+			IsDeath = Character->IsDeath;
 		}
 	}
 }

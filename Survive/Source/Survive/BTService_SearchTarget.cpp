@@ -48,7 +48,7 @@ void UBTService_SearchTarget::TickNode(UBehaviorTreeComponent& OwnerComp, uint8*
 			{
 				OwnerComp.GetBlackboardComponent()->SetValueAsObject(FName(TEXT("Target")), PlayerCharacter);
 			
-				DrawDebugSphere(World, Center, SearchRadius, 16, FColor::Green, false, 0.2f);
+				//DrawDebugSphere(World, Center, SearchRadius, 16, FColor::Green, false, 0.2f);
 
 				return;			
 			}

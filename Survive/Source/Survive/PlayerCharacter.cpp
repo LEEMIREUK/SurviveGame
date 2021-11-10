@@ -158,8 +158,8 @@ void APlayerCharacter::AttackCheck()
 	else
 		DrawColor = FColor::Red;
 
-	DrawDebugCapsule(GetWorld(), Center, HalfHeight, AttackRadius,
-		Rotation, DrawColor, false, 2.f);
+	//DrawDebugCapsule(GetWorld(), Center, HalfHeight, AttackRadius,
+	//	Rotation, DrawColor, false, 2.f);
 
 	if (bResult && HitResult.Actor.IsValid())
 	{
@@ -177,6 +177,9 @@ void APlayerCharacter::OnAttackMontageEnded(UAnimMontage* Montage, bool bInterru
 float APlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
 	Stat->OnAttacked(DamageAmount);
+
+	if (Stat->GetHp() <= 0)
+		IsDeath = true;
 
 	return DamageAmount;
 }

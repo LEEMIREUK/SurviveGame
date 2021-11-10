@@ -31,6 +31,8 @@ void UPlayerAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 
 			Vertical = Character->UpDownValue;
 			Horizontal = Character->LeftRightValue;
+			IsDeath = Character->IsDeath;
+			UE_LOG(LogTemp, Warning, TEXT("Death %s"), IsDeath ? TEXT("true") : TEXT("false"));
 		}
 	}
 }
